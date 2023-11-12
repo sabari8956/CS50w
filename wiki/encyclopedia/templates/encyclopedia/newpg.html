@@ -1,0 +1,24 @@
+{% extends "encyclopedia/layout.html" %}
+
+{% block title %}
+    Create Page
+{% endblock %}
+
+
+{% block body %}
+    <center>
+        <h1>Create a entry</h1><br>
+    </center>
+        <form action="" method="POST">
+            {% csrf_token %}
+            <label for="title">Enter the title name :  </label>
+            <input type="text" name="title">
+            <center>
+                <br>
+                <h2>Type the content of the file [in md format ]</h2>
+                <textarea name="cnt" style="height: 500px;" ></textarea>
+            </center>
+            <input type="submit" value="Save File">
+        </form>
+
+{% endblock %}

@@ -1,0 +1,81 @@
+{% extends "auctions/layout.html" %}
+
+{% block nav %}
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+      <li class="breadcrumb-item"><a href="{% url 'index' %}">Home</a></li>
+      <li class="breadcrumb-item active" aria-current="page">Listings</li>
+    </ol>
+</nav>
+{% endblock %}
+
+{% block messages %}
+    {% for message in messages %}
+    <div class="alert alert-dismissible fade show alert-{{ message.tags }}">
+        {{ message }}
+    </div>
+{% endfor %}
+{% endblock %}
+
+{% block body %}
+    {% if product.listing_status %}
+
+        <h1>{{ product.title }}</h1>
+        {% if user.is_authenticated %}
+            <form action="" method="post" id="wishlist-form">
+                {% csrf_token %}
+                <input type="hidden" name="form_type" value="wishlist-form">
+                {% if wishlist_bool %}
+                    <button type="submit" class="btn btn-info">Remove from Wishlist</button>
+                {% else %}
+                    <button type="submit" class="btn btn-info">Add to Wishlist</button>
+                {% endif %}
+            </form>
+        {% endif %}
+        <img style="max-width: 600px;max-height: 400px;" src="{{product.image_url}}" alt="">
+        <p> {{product.description}} </p>
+        {% if Current_Bid %}
+            <h4>Current Bid : ${{ Current_Bid }}</h4>
+            <p>Base Bid : ${{product.base_price}} </p>
+        {% else %}
+            <h4>Base Bid :$ {{product.base_price}} </h4>
+        {% endif %}
+        <form id="bidding-form" action="" method="post">
+            {% csrf_token %}
+            <input type="hidden" name="form_type" value="bidding-form">
+            {{bid_form}}
+            <button type="submit" class="btn btn-info" >Place a Bid</button>
+        </form>
+        
+        
+
+
+
+        <form action="" id="comment-form" method="post">
+            {% csrf_token %}
+            <input type="hidden" name="form_type" value="comment-form">
+            {{ comment_form }}
+            <button type="submit" class="btn btn-primary ">Comment</button>
+        </form>
+
+        {% for comment in comments %}
+            <hr>
+            <h3>{{ comment.user }}</h3>
+            <p>{{ comment.content }}</p>
+            <hr>
+        {% endfor %}
+        {% if user == product.user %}
+        <form action="" method="post">
+            {% csrf_token %}
+            <input type="hidden" name="form_type" value="deleteListing-form">
+            <button type="submit" class="btn btn-danger" style="margin-top: 40px;   ">Delete Listing</button>
+        </form>
+        {% endif %}
+    {% else %}
+            {% if product.winner %}
+            <h1>The Auction Is SOLD to {{product.winner}} </h1>
+            {% else %}
+            <h1>The Auctions is closed </h1>
+            {% endif %}
+    {% endif%}
+{% endblock %}

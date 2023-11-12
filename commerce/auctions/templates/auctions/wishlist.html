@@ -1,0 +1,45 @@
+{% extends 'auctions/layout.html' %}
+
+{% block nav %}
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+      <li class="breadcrumb-item"><a href="{% url 'index' %}">Home</a></li>
+      <li class="breadcrumb-item active" aria-current="page">Wishlist</li>
+    </ol>
+</nav>
+{% endblock %}
+
+{% block body %}
+
+    <div class="card-group">
+
+        {% for listing, h_bid in listings %}
+
+            <div class="card" style="min-width: 18rem; margin: 2rem;">
+                <h5 class="card-header border "> {{listing.catagory}} </h5>
+                <img src="{{listing.image_url}}" class="card-img-top figure-img img-fluid" style="object-fit: cover; width: 100%;height: 150px;">
+                <div class="card-body bg-light ">
+                  
+                    <h5 class="card-title">{{listing.title}}</h5>
+                    <p class="card-text card-desc">{{listing.description}}</p>
+                    {% if listing.listing_status %}
+                        {% if h_bid %}
+                        <a href="{% url 'product' listing.id %}" class="btn btn-primary" style="margin-top: 40px;"> Bid ${{h_bid}}</a>
+                        <figcaption class="figure-caption">Base price {{listing.base_price}} </figcaption>
+                        {% else %}
+                        <a href="{% url 'product' listing.id %}" class="btn btn-primary" style="margin-top: 40px;"> Bid ${{listing.base_price}}</a>
+                        {% endif %}
+                    {% else %}
+                        <a href="{% url 'product' listing.id %}" class="btn btn-primary" style="margin-top: 40px;">Closed</a>
+                    {% endif %}
+                </div>
+            </div>
+
+        {% empty %}
+            <div>
+                <h1 name="tit">No Item in wishlist!</h1>
+                <a href="{% url 'index' %}" class="nav-link"><h2>Add items from here</h2></a>
+            </div>
+        {% endfor %}
+    </div>
+{% endblock %}

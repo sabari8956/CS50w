@@ -1,0 +1,38 @@
+{% extends "auctions/layout.html" %}
+
+{% block nav %}
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+    <li class="breadcrumb-item active" aria-current="page">Home</li>
+    </ol>
+</nav>
+{% endblock %}
+
+{% block body %}
+    <h2>Active Listings</h2>
+
+    <br><br>
+    <div class="card-group">
+
+        {% for listing, h_bid in listings %}
+
+            <div class="card" style="min-width: 18rem; margin: 2rem;">
+                <h5 class="card-header border "> {{listing.catagory}} </h5>
+                <img src="{{listing.image_url}}" class="card-img-top figure-img img-fluid" style=" width:400px;  height: 200px;padding: 20px;">
+                <div class="card-body bg-light ">
+                  
+                  <h5 class="card-title">{{listing.title}}</h5>
+                  <p class="card-text card-desc">{{listing.description}}</p>
+                  {% if h_bid %}
+                  <a href="{% url 'product' listing.id %}" class="btn btn-primary" style="margin-top: 40px;"> Bid ${{h_bid}}</a>
+                  <figcaption class="figure-caption">Base price {{listing.base_price}} </figcaption>
+                  {% else %}
+                  <a href="{% url 'product' listing.id %}" class="btn btn-primary" style="margin-top: 40px;"> Bid ${{listing.base_price}}</a>
+                  {% endif %}
+                </div>
+            </div>
+
+            
+        {% endfor %}
+    </div>
+{% endblock %}

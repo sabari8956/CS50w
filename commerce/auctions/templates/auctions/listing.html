@@ -1,0 +1,33 @@
+{% extends "auctions/layout.html" %}
+
+{% block nav %}
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+      <li class="breadcrumb-item"><a href="{% url 'index' %}">Home</a></li>
+      <li class="breadcrumb-item active" aria-current="page">New Listing</li>
+    </ol>
+</nav>
+{% endblock %}
+
+{% block messages %}
+    {% if form.errors %}
+    <div class="alert alert-danger">
+        {{ form.base_bid.errors }}
+    </div>
+    {% endif %}
+{% endblock %}
+
+{% block body %}
+    {% if form.errors %}
+    <div class="alert alert-danger">
+        {{ form.errors }}
+    </div>
+    {% endif %}
+    <form action="" method="post">
+        {% csrf_token %}
+
+        {{form.as_p}}
+
+        <button type="submit">Create listing</button>
+    </form>
+{% endblock %}

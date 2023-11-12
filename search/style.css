@@ -1,0 +1,78 @@
+
+
+/* index.html */
+
+* {
+    padding: 0;
+    margin: 0;
+}
+
+body {
+    background-color: #272829;
+}
+
+
+.links {
+    position: absolute;
+    top: 40px;
+    font-size: 28px;
+    color:#D8D9DA;
+    text-decoration: none;
+}
+
+#link1 {
+    right: 70px;
+}
+
+#link2 {
+    right: 300px;
+}
+
+
+
+.form-div {
+    display: flex;
+    width: 800px;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    margin: 35vh 27vw;
+}
+
+#text-box {
+    width: 500px;
+    border-radius: 50px;
+    height: 40px;
+    font-size: 20px;
+    text-indent: 30px;
+    background-color: #272829;
+    border: 2px solid #61677A;
+    color: #D8D9DA;
+}
+
+#g_img {
+    width: 400px;
+}
+
+.btn {
+    width: auto;
+    position: relative;
+    margin: 30px 20px;
+    padding: 10px 20px;
+    left: 70px;
+    border-radius: 7px;
+    background-color: #272829;
+    border: 2px solid #61677A;
+    color: #D8D9DA;
+}
+
+/* Hover Effects */
+
+#text-box:hover {
+    background-color: #363739;
+    border: 2px solid #c1c5ca;
+}
+.btn:hover {
+    background-color: #363739;
+    border: 2px solid #c1c5ca;
+}

@@ -1,0 +1,14 @@
+{% extends "encyclopedia/layout.html" %}
+
+{% block title %}
+    {{ title }}
+{% endblock %}
+
+
+{% block body %}
+    {{  mdfile|safe }}
+
+
+    <a href="{% url 'edit-pg' title %}">Edit</a>
+
+{% endblock %}

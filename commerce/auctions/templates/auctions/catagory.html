@@ -1,0 +1,43 @@
+{% extends "auctions/layout.html" %}
+
+{% block nav %}
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+      <li class="breadcrumb-item"><a href="{% url 'index' %}">Home</a></li>
+      {%if catagory_found %}
+        <li class="breadcrumb-item" aria-current="page"><a href="{% url 'category' %}">Catagory</a></li>
+        <li class="breadcrumb-item active" aria-current="page">{{catagory_found}}</li>
+      {% else %}
+        <li class="breadcrumb-item active" aria-current="page">Catagory</li>
+      {% endif %}
+
+    </ol>
+</nav>
+{% endblock %}
+
+{% block body %}
+    {%if catagory_found %}
+        <h4>Items in catagory : "{{ catagory_found }}" </h4>
+        {% for item in items %}
+            <div>
+                <a href=" {% url 'product' item.id %}"><h2>{{item.title}}</h2></a>
+                <p>{{item.description}}</p>
+                <img width="200px" src="{{item.image_url}}" alt="">
+            </div>
+
+        {% empty %}
+            <h2>No Listings found</h2>
+        {% endfor %}
+
+    {% else %}
+            <form action="" method="POST">
+                {% csrf_token %}
+                {{ catagory_form }}
+                <button type="submit">Search</button>
+            </form>
+    {% endif %}
+
+
+    
+
+{% endblock %}

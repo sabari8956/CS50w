@@ -36,7 +36,7 @@ def search(request):
     else:
         similar_entries = []
         for entries in util.list_entries():
-            if query in entries:
+            if query in entries.lower():
                 similar_entries.append(entries)
         if similar_entries:
             return render(request, "encyclopedia/index.html", {
@@ -48,10 +48,10 @@ def search(request):
 def new_page(request):
     if request.POST:
         data = request.POST
-        entries  = util.list_entries()
+        entries = [entry.lower() for entry in util.list_entries()]
 
         title = data['title']
-        if title in entries:
+        if title.lower() in entries:
             return render(request, "encyclopedia/error.html", {
                 "title": "File already exists"
             })

@@ -20,37 +20,6 @@ function compose_email() {
   document.querySelector('#compose-recipients').value = '';
   document.querySelector('#compose-subject').value = '';
   document.querySelector('#compose-body').value = '';
-
-  document.querySelector('#compose-form').addEventListener('submit', (e) => {
-    // can be removed if there is no need to show the result from json
-    e.preventDefault();
-
-    const recipients = document.querySelector('#compose-recipients').value;
-    const subject = document.querySelector('#compose-subject').value;
-    const body = document.querySelector('#compose-body').value;
-
-    fetch('emails', {
-      method: "POST",
-      body: JSON.stringify({
-        recipients: recipients,
-        subject:subject,
-        body: body,
-      })
-    })
-    .then(response => response.json())
-    .catch(error => {
-      console.log(error);
-    })
-    .then(result => {
-        // Print result
-        console.log(result);
-    })
-    .catch(error => {
-      console.log(error);
-    });
-
-  })
-  return false;
 }
 
 function load_mailbox(mailbox) {
@@ -60,29 +29,5 @@ function load_mailbox(mailbox) {
   document.querySelector('#compose-view').style.display = 'none';
 
   // Show the mailbox name
-  const parentDiv = document.querySelector('#emails-view');
-  parentDiv.innerHTML = `<h3>${mailbox.charAt(0).toUpperCase() + mailbox.slice(1)}</h3>`;
-  fetch(`emails/${mailbox}`)
-  .then(response => response.json())
-  .then(emails => {
-      // Print emails
-      console.log(emails);
-      emails.forEach(element => {
-        const mailDiv = document.createElement('div');
-        
-        const senderAddress = document.createElement('h2');
-        senderAddress.innerHTML = element.sender;
-
-        const mailSubject = document.createElement('h4');
-        mailSubject.innerHTML = element.subject;
-
-        const mailBody = document.createElement('p');
-        mailBody.innerHTML = element.body;
-
-        mailDiv.append(senderAddress, mailSubject, mailBody)
-
-        parentDiv.append(mailDiv);
-      });
-
-  });
+  document.querySelector('#emails-view').innerHTML = `<h3>${mailbox.charAt(0).toUpperCase() + mailbox.slice(1)}</h3>`;
 }

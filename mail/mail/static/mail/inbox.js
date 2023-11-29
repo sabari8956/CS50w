@@ -100,39 +100,48 @@ function load_mailbox(mailbox) {
 
 
 function mail_view(mail_id) {
+
+  // Showing only the mail and hiding the rest
   document.querySelector('#emails-view').style.display = 'none';
   document.querySelector('#compose-view').style.display = 'none';
   document.querySelector('#mail-view').style.display = 'block';
 
+  // Setting the html to none so the previous mail won't show 
   const parentDiv = document.querySelector('#mail-view');
   parentDiv.innerHTML = "";
+
+  // Getting the mal data 
   fetch(`emails/${mail_id}`)
     .then(response => response.json())
     .then(data => {
       fetch(`emails/${mail_id}`, {
         method: 'PUT',
         body: JSON.stringify({
-            read: true
+          read: true
         })
       })
+
+      // Creating Containers to Show the mail data
       const headersDiv = document.createElement('div');
       const subject_data = document.createElement('h1');
-      subject_data.innerHTML = data.subject;
       const sender_data = document.createElement('h4');
-      sender_data.innerHTML = data.sender;
       const body_data = document.createElement('p');
-      body_data.innerHTML = data.body;
-
       const otherData = document.createElement('p');
-      otherData.innerHTML = data.timestamp;
-
-      const reply_btn  = document.createElement('button');
-      reply_btn.innerHTML = 'Reply';
-      reply_btn.addEventListener('click',() =>  reply_mail(data))
-
+      const reply_btn = document.createElement('button');
       const archive = document.createElement('button');
+
+      // Assigning values to elements 
+      otherData.innerHTML = data.timestamp;
+      subject_data.innerHTML = data.subject;
+      sender_data.innerHTML = data.sender;
+      body_data.innerHTML = data.body;
+      reply_btn.innerHTML = 'Reply';
+
+      // Adds event lisner to reply btn
+      reply_btn.addEventListener('click', () => reply_mail(data))
+    
+      // Toggle archive true <-> false
       const archive_data = data.archived;
-      
       if (!archive_data) {
         archive.innerHTML = "Archive";
         archive.addEventListener('click', () => {
@@ -142,9 +151,9 @@ function mail_view(mail_id) {
               archived: true
             })
           })
-          .then(response => {
-            load_mailbox('archive');
-          })
+            .then(response => {
+              load_mailbox('archive');
+            })
         })
       }
 
@@ -157,26 +166,28 @@ function mail_view(mail_id) {
               archived: false
             })
           })
-          .then(response => {
-            load_mailbox('inbox');
-          })
+            .then(response => {
+              load_mailbox('inbox');
+            })
         })
       }
 
+      // Appends everythinh into to child div and appends child div to parent div
       headersDiv.append(subject_data, sender_data, body_data, otherData, archive, reply_btn);
       parentDiv.append(headersDiv);
     })
 }
 
 
-function reply_mail(data)
-{
+function reply_mail(data) {
+  // Goes to Compose section 
   compose_email();
 
+  // Pre-Filling the mail data
   document.querySelector('#compose-recipients').value = data.sender;
   console.log(data.subject);
   var reply_msg = data.subject;
-  if (!reply_msg.startsWith("Re:")){
+  if (!reply_msg.startsWith("Re:")) {
     reply_msg = "Re :" + reply_msg;
   }
   document.querySelector('#compose-subject').value = reply_msg;

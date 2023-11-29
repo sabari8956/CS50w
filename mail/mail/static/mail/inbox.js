@@ -126,11 +126,14 @@ function mail_view(mail_id) {
       const otherData = document.createElement('p');
       otherData.innerHTML = data.timestamp;
 
+      const reply_btn  = document.createElement('button');
+      reply_btn.innerHTML = 'Reply';
+      reply_btn.addEventListener('click',() =>  reply_mail(data))
+
       const archive = document.createElement('button');
       const archive_data = data.archived;
       
       if (!archive_data) {
-        console.log(archive_data);
         archive.innerHTML = "Archive";
         archive.addEventListener('click', () => {
           fetch(`/emails/${mail_id}`, {
@@ -160,7 +163,22 @@ function mail_view(mail_id) {
         })
       }
 
-      headersDiv.append(subject_data, sender_data, body_data, otherData, archive);
+      headersDiv.append(subject_data, sender_data, body_data, otherData, archive, reply_btn);
       parentDiv.append(headersDiv);
     })
+}
+
+
+function reply_mail(data)
+{
+  compose_email();
+
+  document.querySelector('#compose-recipients').value = data.sender;
+  console.log(data.subject);
+  var reply_msg = data.subject;
+  if (!reply_msg.startsWith("Re:")){
+    reply_msg = "Re :" + reply_msg;
+  }
+  document.querySelector('#compose-subject').value = reply_msg;
+  document.querySelector('#compose-body').value = `On ${data.timestamp} ${data.sender} wrote: ${data.body}\n`;
 }

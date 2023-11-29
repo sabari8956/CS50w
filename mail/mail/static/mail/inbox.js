@@ -1,4 +1,4 @@
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
 
   // Use buttons to toggle between views
   document.querySelector('#inbox').addEventListener('click', () => load_mailbox('inbox'));
@@ -47,7 +47,7 @@ function compose_email() {
         console.log(error);
       })
       .then(response => {
-        console.log(response);
+        // Redirects to Sent Page
         load_mailbox('sent');
       })
   })
@@ -63,6 +63,7 @@ function load_mailbox(mailbox) {
   // Show the mailbox name
   document.querySelector('#emails-view').innerHTML = `<h3>${mailbox.charAt(0).toUpperCase() + mailbox.slice(1)}</h3>`;
 
+  // Loads mails
   const parentDiv = document.querySelector('#emails-view');
   fetch(`emails/${mailbox}`)
     .then(response => response.json())
@@ -70,11 +71,14 @@ function load_mailbox(mailbox) {
       console.log(error);
     })
     .then(mails => {
-      console.log(mails);
+      // Creates a div , with mail details and adds to div
       mails.forEach(mail => {
+
+        // Mail Container
         const mailDiv = document.createElement('div');
         mailDiv.classList.add('mail-divs');
 
+        // mail Data
         const senderAddress = document.createElement('h2');
         senderAddress.innerHTML = mail.sender;
         const subject = document.createElement('h4');
@@ -82,10 +86,11 @@ function load_mailbox(mailbox) {
         const body = document.createElement('p');
         body.innerHTML = mail.body;
 
-        if (!mail.read)
-        {
-          mailDiv.style.backgroundColor = '#ccc';
+        // if mail is read
+        if (mail.read) {
+          mailDiv.style.backgroundColor = 'aliceblue';
         }
+        // on Clicking a Mail 
         mailDiv.addEventListener('click', () => mail_view(mail.id));
         mailDiv.append(senderAddress, subject, body);
         parentDiv.append(mailDiv);
@@ -94,17 +99,22 @@ function load_mailbox(mailbox) {
 }
 
 
-function mail_view(mail_id) 
-{
+function mail_view(mail_id) {
   document.querySelector('#emails-view').style.display = 'none';
   document.querySelector('#compose-view').style.display = 'none';
   document.querySelector('#mail-view').style.display = 'block';
 
   const parentDiv = document.querySelector('#mail-view');
-
+  parentDiv.innerHTML = "";
   fetch(`emails/${mail_id}`)
-  .then(response => response.json())
-  .then(data => {
+    .then(response => response.json())
+    .then(data => {
+      fetch(`emails/${mail_id}`, {
+        method: 'PUT',
+        body: JSON.stringify({
+            read: true
+        })
+      })
       const headersDiv = document.createElement('div');
       const subject_data = document.createElement('h1');
       subject_data.innerHTML = data.subject;
@@ -112,7 +122,45 @@ function mail_view(mail_id)
       sender_data.innerHTML = data.sender;
       const body_data = document.createElement('p');
       body_data.innerHTML = data.body;
-      headersDiv.append(subject_data, sender_data, body_data);
+
+      const otherData = document.createElement('p');
+      otherData.innerHTML = data.timestamp;
+
+      const archive = document.createElement('button');
+      const archive_data = data.archived;
+      
+      if (!archive_data) {
+        console.log(archive_data);
+        archive.innerHTML = "Archive";
+        archive.addEventListener('click', () => {
+          fetch(`/emails/${mail_id}`, {
+            method: 'PUT',
+            body: JSON.stringify({
+              archived: true
+            })
+          })
+          .then(response => {
+            load_mailbox('archive');
+          })
+        })
+      }
+
+      else {
+        archive.innerHTML = "UN Archive";
+        archive.addEventListener('click', () => {
+          fetch(`/emails/${mail_id}`, {
+            method: 'PUT',
+            body: JSON.stringify({
+              archived: false
+            })
+          })
+          .then(response => {
+            load_mailbox('inbox');
+          })
+        })
+      }
+
+      headersDiv.append(subject_data, sender_data, body_data, otherData, archive);
       parentDiv.append(headersDiv);
-  })
+    })
 }

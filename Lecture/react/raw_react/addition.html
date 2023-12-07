@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Addition</title>
+    <!-- importing react dependices -->
+    <script src="https://unpkg.com/react@17/umd/react.production.min.js" crossorigin></script>
+    <script src="https://unpkg.com/react-dom@17/umd/react-dom.production.min.js" crossorigin></script>
+    <script src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
+    <style>
+        #App {
+            text-align: center;
+            font-family: sans-serif;
+        }
+
+        #problem {
+            font-size: 72px;
+        }
+        .fail {
+            color: red;
+        }
+
+        #winner {
+            font-size: 72px;
+            color: green;
+        }
+    </style>
+</head>
+<body>
+    <div id="App">
+    </div>
+    
+    <script type="text/babel">
+
+        
+        function App() {
+            const [state, setState] = React.useState({
+                num1: Math.floor(Math.random() * 10),
+                num2 : Math.floor(Math.random() * 10),
+                response: "",
+                score: 0,
+                result: false
+            })
+
+            function changeValue(e) {
+                setState({
+                    ...state,
+                    response: e.target.value
+                });
+            }
+
+            function keyPress(e) {
+                if (e.key === "Enter"){
+                    const answer = parseInt(state.response);
+                    if (answer === state.num1 + state.num2)
+                    {
+                        setState({
+                            ...state,
+                            score: state.score + 1,
+                            num1: Math.floor(Math.random() * 10),
+                            num2 : Math.floor(Math.random() * 10),
+                            response: "",
+                            result: false,
+                        });
+                    }
+                    else
+                    {
+                        setState({
+                            ...state,
+                            score: state.score - 1,
+                            result: true
+                        });
+                    }
+                }
+            }
+
+            if (state.score === 10) {
+                return (
+                    <div id="winner">You won!</div>
+                );
+            }
+
+
+            return (
+                <div>
+                    <h1 id="problem" className={state.result ? "fail" : ""} >{state.num1} + {state.num2}</h1>
+                    <input onKeyPress={keyPress} onChange={changeValue} value={state.response} type="text" />
+                    <p>Score: {state.score}</p>
+                </div>
+            );
+        }
+
+        ReactDOM.render(<App />, document.querySelector("#App"));
+    </script>
+</body>
+</html>

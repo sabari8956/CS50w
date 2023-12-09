@@ -1,12 +1,14 @@
 from django.contrib.auth import authenticate, login, logout
 from django.db import IntegrityError
 from django.contrib.auth.decorators import login_required
-from django.http import HttpResponse, HttpResponseRedirect
+from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 from django.shortcuts import render
 from django.urls import reverse
 from .models import *
-
-from .models import User
+from django.views.decorators.csrf import csrf_exempt
+from django.core.serializers import serialize
+from .models import User, Post
+import json
 
 
 def index(request):
@@ -64,9 +66,9 @@ def register(request):
     else:
         return render(request, "network/register.html")
 
-@login_required(login_url='login') # need to add a arg of username where we can pass username and get output
-def view_profile(req):
-    user = User.objects.get(pk=req.user.id)
+# @login_required(login_url='login') # need to add a arg of username where we can pass username and get output
+def view_profile(req, user):
+    user = User.objects.get(username=user)
     return render(req, "network/profile.html", {
         "follwers":  user.followers.all(),
         "following": user.following.all()
@@ -75,3 +77,37 @@ def view_profile(req):
 
 def view_search(req):
     return render(req, "network/search.html")
+
+
+@login_required
+def create_post(req):
+    if req.method != "POST":
+        return JsonResponse({"error": "POST request required."}, status=400)
+    
+    data = json.loads(req.body)
+    print(data)
+
+    post_data = Post(user=req.user, content=data["content"])
+    post_data.save()
+    return JsonResponse({"Status":"Post Posted"}, status=200)
+
+
+def search_user(req):
+    if req.method != "POST":
+        return JsonResponse({"error": "Expected Post method"}, status=400)
+    
+    data = json.loads(req.body)
+    query = data.get("query", "")
+    results_list = []
+    if not query:
+        return JsonResponse({"users": []}, status=200)
+    
+    results = User.objects.filter(username__icontains=query).values('id', 'username')
+    results_list = [
+        user
+        for user in results.annotate(
+            followers_count=models.Count('followers'),
+            following_count=models.Count('following')
+        )
+    ]
+    return JsonResponse({"users": results_list}, status=200)

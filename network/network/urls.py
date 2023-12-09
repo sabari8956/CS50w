@@ -8,6 +8,11 @@ urlpatterns = [
     path("login", views.login_view, name="login"),
     path("logout", views.logout_view, name="logout"),
     path("register", views.register, name="register"),
-    path("profile/", views.view_profile, name="profile"),
+    path("profile/<str:user>", views.view_profile, name="profile"),
     path("search/", views.view_search, name="search"),
+
+
+    # APIs 
+    path('post', views.create_post, name="create_post"),
+    path('finduser', views.search_user, name="find_user")
 ]

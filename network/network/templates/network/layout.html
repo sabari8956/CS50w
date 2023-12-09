@@ -7,47 +7,16 @@
     <title>{% block title %}Social Network{% endblock %}</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
         integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+        <script src="https://unpkg.com/react@17/umd/react.production.min.js" crossorigin></script>
+        <script src="https://unpkg.com/react-dom@17/umd/react-dom.production.min.js" crossorigin></script>
+        <script src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
     <link href="{% static 'network/styles.css' %}" rel="stylesheet">
 </head>
 
 <body>
-
-    <!-- <nav class="navbar navbar-expand-lg navbar-light bg-light">
-            <a class="navbar-brand" href="#">Network</a>
-          
-            <div>
-
-
-              <ul class="navbar-nav mr-auto">
-                {% if user.is_authenticated %}
-                    <li class="nav-item">
-                        <a class="nav-link" href="#"><strong>{{ user.username }}</strong></a>
-                    </li>
-                {% endif %}
-                <li class="nav-item">
-                  <a class="nav-link" href="{% url 'index' %}">All Posts</a>
-                </li>
-                {% if user.is_authenticated %}
-                    <li class="nav-item">
-                        <a class="nav-link" href="#">Following</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{% url 'logout' %}">Log Out</a>
-                    </li>
-                {% else %}
-                    <li class="nav-item">
-                        <a class="nav-link" href="{% url 'login' %}">Log In</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{% url 'register' %}">Register</a>
-                    </li>
-                {% endif %}
-              </ul>
-            </div>
-          </nav> -->
     <div class="destop">
         <nav class="navbar">
-            <div class="nav-title">Network</div>
+            <div class="nav-title"><a href="{% url 'index' %}">Network</a></div>
             <div class="nav-user">
                 {% if user.is_authenticated %}
                     <span>{{ user.username }}</span>
@@ -63,9 +32,9 @@
 
         <div class="sidebar-posts">
             <div class="sidebar">
-                <div class="side-search">Search</div>
+                <div class="side-search"><a href="{% url 'search' %}">Search</a></div>
                 {% if user.is_authenticated %}
-                    <div class="side-profile"><a href="{% url 'index'%}">Profile</a></div>
+                    <div class="side-profile"><a href="{% url 'profile'%}">Profile</a></div>
                     <div class="side-log"><a href="{% url 'logout'%}">Logout</a></div>
                 {% else %}
                     <div class="side-reg"><a href="{% url 'register'%}">Register</a></div>
@@ -81,6 +50,8 @@
          
 
     </div>
+    {% block script %}
+    {% endblock %}
 </body>
 
 </html>

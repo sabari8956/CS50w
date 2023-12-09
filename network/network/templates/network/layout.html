@@ -2,17 +2,22 @@
 
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        <title>{% block title %}Social Network{% endblock %}</title>
-        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
-        <link href="{% static 'network/styles.css' %}" rel="stylesheet">
-    </head>
-    <body>
 
-        <nav class="navbar navbar-expand-lg navbar-light bg-light">
+<head>
+    <title>{% block title %}Social Network{% endblock %}</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
+        integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+    <link href="{% static 'network/styles.css' %}" rel="stylesheet">
+</head>
+
+<body>
+
+    <!-- <nav class="navbar navbar-expand-lg navbar-light bg-light">
             <a class="navbar-brand" href="#">Network</a>
           
             <div>
+
+
               <ul class="navbar-nav mr-auto">
                 {% if user.is_authenticated %}
                     <li class="nav-item">
@@ -39,11 +44,43 @@
                 {% endif %}
               </ul>
             </div>
-          </nav>
-        
-        <div class="body">
-            {% block body %}
-            {% endblock %}
-        </div>
-    </body>
+          </nav> -->
+    <div class="destop">
+        <nav class="navbar">
+            <div class="nav-title">Network</div>
+            <div class="nav-user">
+                {% if user.is_authenticated %}
+                    <span>{{ user.username }}</span>
+                <div class="profile-pic"></div>
+                <!-- Will add url of img later -->
+                {% else %}
+                <span>anonymous</span>
+                <div class="profile-pic"></div>
+                <!-- will have a temp profile pic -->
+                {% endif %}
+            </div>
+        </nav>
+
+        <div class="sidebar-posts">
+            <div class="sidebar">
+                <div class="side-search">Search</div>
+                {% if user.is_authenticated %}
+                    <div class="side-profile"><a href="{% url 'index'%}">Profile</a></div>
+                    <div class="side-log"><a href="{% url 'logout'%}">Logout</a></div>
+                {% else %}
+                    <div class="side-reg"><a href="{% url 'register'%}">Register</a></div>
+                    <div class="side-log"><a href="{% url 'login'%}">Login</a></div>
+                {% endif %}
+            </div>
+         
+            <div class="body">
+                {% block body %}
+                {% endblock %}
+            </div>
+         </div>
+         
+
+    </div>
+</body>
+
 </html>

@@ -69,9 +69,19 @@ def register(request):
 # @login_required(login_url='login') # need to add a arg of username where we can pass username and get output
 def view_profile(req, user):
     user = User.objects.get(username=user)
+    followers_cnt = len(user.followers.all())
+    following_cnt = len(user.following.all())
+    follow_bool = False
+    if req.user.is_authenticated:
+        user_client = User.objects.get(pk=req.user.id)
+        following = user_client.following.all()
+        if user in following:
+            follow_bool = True
     return render(req, "network/profile.html", {
-        "follwers":  user.followers.all(),
-        "following": user.following.all()
+        "username": user,
+        "follwers_cnt":  followers_cnt,
+        "following_cnt": following_cnt,
+        "following": follow_bool
     })
 
 
@@ -111,3 +121,19 @@ def search_user(req):
         )
     ]
     return JsonResponse({"users": results_list}, status=200)
+
+
+@csrf_exempt
+@login_required
+def follow_unfollow(req):
+    if req.method == "PUT":
+        data = json.loads(req.body)
+        data_bool = data.get("follow")
+        data_user1 = User.objects.get(pk= req.user.id)
+        data_user2 = User.objects.get(pk= int(data.get("user_id")))
+        if data_bool == "True":
+            data_user1.following.remove(data_user2)
+        else:
+            data_user1.following.add(data_user2)
+        return JsonResponse({"status": "Done"}, status=200)
+    return JsonResponse({"Error": "its should be post method"}, status=401)

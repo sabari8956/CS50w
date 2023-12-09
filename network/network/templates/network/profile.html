@@ -1,9 +1,42 @@
 {% extends "network/layout.html" %}
+{% load static %}
+
 
 {% block body %}
 <div>
-    {{user.username}}
-    {{follwers}}
-    {{following}}
+    <h1>{{username}}</h1>
+    <p>Followers: {{follwers_cnt}}</p>
+    <p>Following: {{following_cnt}}</p>
+    {% if user.is_authenticated %}
+        {% if following %}
+            <button id="fl-uf" >Unfollow</button>
+        {% else %}
+            <button id="fl-uf">Follow</button>
+        {% endif %}
+    {% endif %}
 </div>
+{% endblock %}
+
+{% block script %}
+    <script>
+         const f_uf_btn = document.querySelector("#fl-uf");
+         if (f_uf_btn)
+         {
+            const user = "{{username.id}}";
+            const isFollowing = "{{following}}"
+            f_uf_btn.addEventListener('click', () => {
+                fetch("/follow", {
+                    method: "PUT",
+                    body: JSON.stringify({
+                        user_id: user,
+                        follow: isFollowing
+                    })
+                })
+                .then(response => response.json)
+                .then(response => {
+                    window.location.reload();
+                })
+            })
+         }
+    </script>
 {% endblock %}

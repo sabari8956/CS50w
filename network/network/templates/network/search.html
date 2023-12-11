@@ -9,7 +9,19 @@
 
     <div id="search-result"></div>
 
-    <div id="all-posts"></div>
+    <div id="all-posts">
+        <br>
+        <br> <hr>
+        <h2>All Posts</h2>
+        {% for post in posts %}
+            <div class="post-container">
+                <div class="post-container">
+                    <h1> {{post.user}} </h1>
+                    <p>{{post.content}}</p>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
 {% endblock %}
 
 {% block script %}
@@ -37,8 +49,8 @@ document.addEventListener("DOMContentLoaded", () => {
                 const follower = document.createElement('p');
                 const following = document.createElement('p');
                 name.innerHTML = user.username;
-                follower.innerHTML = 'followers: ' + user.followers_count;
-                following.innerHTML = 'following: ' + user.following_count;
+                follower.innerHTML = 'followers: ' + user.followers;
+                following.innerHTML = 'following: ' + user.following;
                 childDiv.append(name, follower, following);
 
                 childDiv.addEventListener('click', () => {

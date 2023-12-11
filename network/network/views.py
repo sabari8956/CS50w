@@ -12,7 +12,14 @@ import json
 
 
 def index(request):
-    return render(request, "network/index.html")
+
+    if request.user.is_authenticated:
+        following_posts = Post.objects.filter(user__in=request.user.following.all())
+    else:
+        following_posts = Post.objects.all()
+    return render(request, "network/index.html", {
+        "posts": following_posts
+    })
 
 
 def login_view(request):
@@ -72,6 +79,7 @@ def view_profile(req, user):
     followers_cnt = len(user.followers.all())
     following_cnt = len(user.following.all())
     follow_bool = False
+    my_Posts = Post.objects.filter(user= user.id)
     if req.user.is_authenticated:
         user_client = User.objects.get(pk=req.user.id)
         following = user_client.following.all()
@@ -81,12 +89,16 @@ def view_profile(req, user):
         "username": user,
         "follwers_cnt":  followers_cnt,
         "following_cnt": following_cnt,
-        "following": follow_bool
+        "following": follow_bool,
+        "posts": my_Posts
     })
 
 
 def view_search(req):
-    return render(req, "network/search.html")
+    print(Post.objects.all())
+    return render(req, "network/search.html", {
+        "posts": Post.objects.all()
+    })
 
 
 @login_required
@@ -108,22 +120,20 @@ def search_user(req):
     
     data = json.loads(req.body)
     query = data.get("query", "")
-    results_list = []
     if not query:
         return JsonResponse({"users": []}, status=200)
     
     results = User.objects.filter(username__icontains=query).values('id', 'username')
-    results_list = [
-        user
-        for user in results.annotate(
-            followers_count=models.Count('followers'),
-            following_count=models.Count('following')
-        )
-    ]
-    return JsonResponse({"users": results_list}, status=200)
+    Search_results = []
+    for user in results:
+        user_data = {}
+        Search_user = User.objects.get(pk=user["id"])
+        user_data["username"] = Search_user.username
+        user_data["followers"] = len(Search_user.followers.all())
+        user_data["following"] = len(Search_user.following.all())
+        Search_results.append(user_data)
+    return JsonResponse({"users": Search_results}, status=200)
 
-
-@csrf_exempt
 @login_required
 def follow_unfollow(req):
     if req.method == "PUT":
@@ -137,3 +147,29 @@ def follow_unfollow(req):
             data_user1.following.add(data_user2)
         return JsonResponse({"status": "Done"}, status=200)
     return JsonResponse({"Error": "its should be post method"}, status=401)
+
+
+@login_required
+
+def handle_like(request):
+    if request.method == "PUT":
+        data = json.loads(request.body)
+        user = User.objects.get(pk=data["user_id"])
+        post = Post.objects.get(pk=data["post"])
+        print(data, user, post)
+
+        # Convert the 'like' string to a boolean
+        like_status = data["like"] == 'true'
+        
+        if like_status:
+            post.likes.remove(user)
+        else:
+            post.likes.add(user)
+
+        post.save()
+        post = Post.objects.get(pk=data["post"])
+        print(post)
+
+        return JsonResponse({"result": "Success"}, status=200)
+
+    return JsonResponse({"error": "Invalid method"}, status=400)

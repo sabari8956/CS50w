@@ -7,7 +7,6 @@ class User(AbstractUser):
 
     def __str__(self):
         return f"{self.username}"
-
 class Post(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     content = models.TextField()
@@ -15,4 +14,9 @@ class Post(models.Model):
     timestamp = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return f"Post by {self.user.username}"
+        liked_users = ', '.join([user.username for user in self.likes.all()])
+        return f"Post by {self.user.username} -> {self.content} <> lIke: {liked_users}"
+
+    
+    class Meta:
+        ordering = ['-timestamp']

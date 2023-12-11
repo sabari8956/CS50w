@@ -104,3 +104,9 @@ nav {
     padding: 10px 20px;
     margin-left: 20px;
 }
+
+.body {
+    height: 92vh;
+    overflow-y: auto;
+
+}

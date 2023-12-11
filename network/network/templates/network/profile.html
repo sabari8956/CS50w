@@ -7,19 +7,39 @@
     <h1>{{username}}</h1>
     <p>Followers: {{follwers_cnt}}</p>
     <p>Following: {{following_cnt}}</p>
-    {% if user.is_authenticated %}
+    {% if user.is_authenticated and username != user %}
         {% if following %}
             <button id="fl-uf" >Unfollow</button>
         {% else %}
             <button id="fl-uf">Follow</button>
         {% endif %}
     {% endif %}
+
+    <br>
+    <br>
+    <hr>
+
+    <div class="My-Posts">
+        {% for post in posts %}
+        <div class="post-container">
+            <div class="post-container">
+                <h1> {{post.user}} </h1>
+                <p>{{post.content}}</p>
+            </div>
+        </div>
+        {% empty %}
+            <h1>No Posts.</h1>
+            <p>Post some posts :]</p>
+        {% endfor %}
+    </div>
 </div>
 {% endblock %}
 
 {% block script %}
+<script src="{% static 'network/index.js' %}"></script>
     <script>
          const f_uf_btn = document.querySelector("#fl-uf");
+         let csrftoken = getCookie('csrftoken');
          if (f_uf_btn)
          {
             const user = "{{username.id}}";
@@ -27,6 +47,7 @@
             f_uf_btn.addEventListener('click', () => {
                 fetch("/follow", {
                     method: "PUT",
+                    headers: { "X-CSRFToken": csrftoken },
                     body: JSON.stringify({
                         user_id: user,
                         follow: isFollowing

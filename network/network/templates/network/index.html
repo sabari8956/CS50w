@@ -8,10 +8,15 @@
         <input type="text" name="post-content" id="post-content-input" placeholder="Write what's on your mind ....">
         <button id="post-btn">Post</button>
     </div>
+
+    <h4>Following Posts</h4>
+
+    {% else %}
+    <h4>All Posts</h4>
     {% endif %}
+
     <div class="content-posts">
 
-        <h4>Following Posts</h4>
         {% for post in posts %}
         <div class="post-container">
             <div class="post-container">

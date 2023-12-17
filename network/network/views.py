@@ -95,7 +95,7 @@ def view_profile(req, user):
 
 
 def view_search(req):
-    print(Post.objects.all())
+    # print(Post.objects.all())
     return render(req, "network/search.html", {
         "posts": Post.objects.all()
     })
@@ -107,7 +107,7 @@ def create_post(req):
         return JsonResponse({"error": "POST request required."}, status=400)
     
     data = json.loads(req.body)
-    print(data)
+    # print(data)
 
     post_data = Post(user=req.user, content=data["content"])
     post_data.save()
@@ -156,19 +156,15 @@ def handle_like(request):
         data = json.loads(request.body)
         user = User.objects.get(pk=data["user_id"])
         post = Post.objects.get(pk=data["post"])
-        print(data, user, post)
 
-        # Convert the 'like' string to a boolean
-        like_status = data["like"] == 'true'
+        like_status = data["like"] 
         
         if like_status:
-            post.likes.remove(user)
-        else:
             post.likes.add(user)
+        else:
+            post.likes.remove(user)
 
         post.save()
-        post = Post.objects.get(pk=data["post"])
-        print(post)
 
         return JsonResponse({"result": "Success"}, status=200)
 

@@ -1,16 +1,24 @@
 
+* {
+    padding: 0%;
+    margin: 0%;
+}
+
 .destop {
-    background-color: antiquewhite;
+    background-color: #161616;
+    color: #fff;
 }
 
 nav {
     height: 8vh;
-    background-color: #333;
+    background-color: #161616;
     color: #fff;
     padding: 10px;
     display: flex;
     justify-content: space-between;
     align-items: center;
+    border-bottom: #7c7777 2px solid;
+
 }
 
 .nav-title a{
@@ -63,11 +71,11 @@ nav {
     display: flex;
     flex-direction: column;
     justify-content: flex-end;
+    border-right:  #7c7777 2px solid;
 }
 
 .body {
     flex: 1;
-    padding: 20px;
 }
 
 .sidebar div {
@@ -91,13 +99,13 @@ nav {
     flex-direction: row;
     align-items: center;
     justify-content: center;
-    margin-top: 20px; /* Optional: Add margin for spacing */
+    margin-top: 20px; 
 }
 
 .post input {
-    width: 80%; /* Adjust the width as needed */
+    width: 80%; 
     padding: 10px;
-    margin-bottom: 0px; /* Optional: Add margin for spacing */
+    margin-bottom: 0px; 
 }
 
 .post button {
@@ -109,4 +117,20 @@ nav {
     height: 92vh;
     overflow-y: auto;
 
+}
+
+#posts_topic {
+    padding: 10px 5px;
+    
+}
+.post-container {
+    padding: 20px;
+    color: #fff;
+    border-top:  #7c7777 1px solid;
+    border-bottom:  #7c7777 1px solid;
+}
+
+.content {
+    padding: 0px;
+    margin: 0px;
 }

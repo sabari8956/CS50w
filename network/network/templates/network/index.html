@@ -9,32 +9,33 @@
         <button id="post-btn">Post</button>
     </div>
 
-    <h4>Following Posts</h4>
+    <h3 id="posts_topic">Following Posts</h3>
 
     {% else %}
-    <h4>All Posts</h4>
+    <h3 id="posts_topic">All Posts</h3>
     {% endif %}
 
     <div class="content-posts">
 
         {% for post in posts %}
-        <div class="post-container">
-            <div class="post-container">
-                <h1> {{post.user}} </h1>
-                <p>{{post.content}}</p>
-                {% if user.is_authenticated %}
+    <div class="post-container">
+        <h1> {{post.user}} </h1>
+        <p>{{post.content}}</p>
+        {% if user.is_authenticated %}
+            <button data-like="{% if user in post.likes.all %}true{% else %}fale{% endif %}" data-post_id="{{ post.id }}" id="like-btn">
                 {% if user not in post.likes.all %}
-                <button data-like="false" data-post_id="{{post.id}}" id="like-btn">❤️</button>
+                    👍
                 {% else %}
-                <button data-like="true" data-post_id="{{post.id}}" id="like-btn">🖤</button>
+                    👎
                 {% endif %}
-                {% endif %}
-            </div>
-        </div>
-        {% empty %}
-        <h1>No Posts.</h1>
-        <p>Go to search for some random posts</p>
-        {% endfor %}
+            </button>
+        {% endif %}
+
+    </div>
+    {% empty %}
+    <h1>No Posts.</h1>
+    <p>Go to search for some random posts</p>
+    {% endfor %}
 
     </div>
 </div>
@@ -62,25 +63,35 @@
                     console.log(response);
                 })
         })
-
         document.querySelectorAll('#like-btn').forEach(btn => {
             btn.addEventListener('click', (event) => {
-                console.log("Clicked");
                 let csrftoken = getCookie('csrftoken');
                 let user = "{{ user.id }}";
-                let liked = event.target.dataset.like;  
-                let post = event.target.dataset.post_id;   
+                let liked = event.target.dataset.like === 'true';
+                let post = event.target.dataset.post_id;
+
                 fetch('/addlike', {
                     method: "PUT",
                     headers: { "X-CSRFToken": csrftoken },
                     body: JSON.stringify({
                         user_id: user,
-                        like: liked,
+                        like: !liked,
                         post: post,
                     })
+                })
+                .then(response => response.json())
+                .then(response => {
+                    if (!liked) {
+                        event.target.innerHTML = '👎';
+                        event.target.dataset.like = !liked;
+                    } else {
+                        event.target.textContent = '👍';
+                        event.target.dataset.like = !liked;
+                    }
                 });
             });
         });
+
 
     })
 

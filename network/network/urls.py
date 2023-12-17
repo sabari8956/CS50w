@@ -16,5 +16,6 @@ urlpatterns = [
     path('post', views.create_post, name="create_post"),
     path('finduser', views.search_user, name="find_user"),
     path('follow', views.follow_unfollow, name="followapi"),
-    path("addlike", views.handle_like, name="likes")
+    path("addlike", views.handle_like, name="likes"),
+    path("addcomment", views.handle_comment, name="comment"),
 ]

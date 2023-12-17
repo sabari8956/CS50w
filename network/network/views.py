@@ -107,7 +107,6 @@ def create_post(req):
         return JsonResponse({"error": "POST request required."}, status=400)
     
     data = json.loads(req.body)
-    # print(data)
 
     post_data = Post(user=req.user, content=data["content"])
     post_data.save()
@@ -155,7 +154,7 @@ def handle_like(request):
     if request.method == "PUT":
         data = json.loads(request.body)
         user = User.objects.get(pk=data["user_id"])
-        post = Post.objects.get(pk=data["post"])
+        post = Post.objects.get(pk=data["post_id"])
 
         like_status = data["like"] 
         
@@ -169,3 +168,20 @@ def handle_like(request):
         return JsonResponse({"result": "Success"}, status=200)
 
     return JsonResponse({"error": "Invalid method"}, status=400)
+
+
+def handle_comment(req):
+    if req.method != "POST":
+        return JsonResponse({"error": "Invalid method"}, status=400)
+    
+    data = json.loads(req.body)
+    user = User.objects.get(pk=data["user_id"])
+    post = Post.objects.get(pk=data["post_id"])
+
+    comment_data = data["comment_data"]
+
+    if comment_data.strip():
+        Comment(post= post, user= user, body= comment_data).save()
+        print(f"Comment Added by {user} -> {post}")
+        return JsonResponse({"result": "Success"}, status=200)
+    return JsonResponse({"error": "No Comment Data"}, status=200)

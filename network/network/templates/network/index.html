@@ -29,6 +29,13 @@
                     👎
                 {% endif %}
             </button>
+
+            <button id="comment-btn">Comment</button>
+
+            <div class="comment-div" style="display: none;">
+                <input type="text">
+                <button data-post_id="{{ post.id }}" id="comment-submitBtn">Sub</button>
+            </div>
         {% endif %}
 
     </div>
@@ -63,6 +70,7 @@
                     console.log(response);
                 })
         })
+
         document.querySelectorAll('#like-btn').forEach(btn => {
             btn.addEventListener('click', (event) => {
                 let csrftoken = getCookie('csrftoken');
@@ -92,7 +100,42 @@
             });
         });
 
+        document.querySelectorAll('#comment-btn').forEach(commentBtn => {
+        commentBtn.addEventListener('click', (event) => {
+            const commentSection = event.target.nextElementSibling;
+            // commentSection.style.display = commentSection.style.display === 'none' ? 'block' : 'none';
+            if (commentSection.style.display === 'none'){
+                commentSection.style.display = 'block';
+                commentBtn.innerHTML = "Discard";
+            } else {
+                commentSection.style.display = 'none';
+                commentBtn.innerHTML= "Comment";
+            }
+        });
 
+        document.querySelectorAll("#comment-submitBtn").forEach(submitBtn => {
+            submitBtn.addEventListener('click',(event) => {
+                let csrftoken = getCookie('csrftoken');
+                let user = "{{ user.id }}";
+                let post_id = event.target.dataset.post_id;
+                let comment_data = event.target.previousElementSibling;
+
+                fetch('addcomment', {
+                    method: "POST",
+                    headers: { "X-CSRFToken": csrftoken },
+                    body: JSON.stringify({
+                        user_id: user,
+                        post_id: post_id,
+                        comment_data: comment_data.value
+                    })
+                })
+                comment_data.value = '';
+                let commentBtn = event.target.closest('.post-container').querySelector('#comment-btn');
+                commentBtn.click()
+
+            } )
+        })
+    });
     })
 
 

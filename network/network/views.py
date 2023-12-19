@@ -185,3 +185,8 @@ def handle_comment(req):
         print(f"Comment Added by {user} -> {post}")
         return JsonResponse({"result": "Success"}, status=200)
     return JsonResponse({"error": "No Comment Data"}, status=200)
+
+
+def view_post(req, post_id):
+    postData = Post.objects.get(pk= post_id)
+    

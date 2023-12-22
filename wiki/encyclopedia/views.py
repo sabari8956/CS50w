@@ -5,7 +5,7 @@ from markdown2 import markdown as render_md
 from random import choice
 
 def index(request):
-    
+    print("here")
     return render(request, "encyclopedia/index.html", {
         "entries": util.list_entries()
     })

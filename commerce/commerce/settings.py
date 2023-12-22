@@ -29,6 +29,7 @@ ALLOWED_HOSTS = ["sabari8956.azurewebsites.net"]
 
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 
+
 # to overcome warnings 
 DEFAULT_AUTO_FIELD = 'django.db.models.AutoField'
 
@@ -111,7 +112,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'IST'
+TIME_ZONE = 'UTC'
 
 USE_I18N = True
 

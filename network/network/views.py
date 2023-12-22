@@ -73,7 +73,6 @@ def register(request):
     else:
         return render(request, "network/register.html")
 
-# @login_required(login_url='login') # need to add a arg of username where we can pass username and get output
 def view_profile(req, user):
     user = User.objects.get(username=user)
     followers_cnt = len(user.followers.all())
@@ -153,8 +152,9 @@ def follow_unfollow(req):
 def handle_like(request):
     if request.method == "PUT":
         data = json.loads(request.body)
+        print(data)
         user = User.objects.get(pk=data["user_id"])
-        post = Post.objects.get(pk=data["post_id"])
+        post = Post.objects.get(pk=data["post"])
 
         like_status = data["like"] 
         
@@ -188,5 +188,24 @@ def handle_comment(req):
 
 
 def view_post(req, post_id):
-    postData = Post.objects.get(pk= post_id)
+    post = Post.objects.get(pk= post_id)
+    comments =[ {"name": x.user.username, "comment": x.body, "timestamp": x.timestamp} for x in post.comments.all()]
+    postData = {
+        "user": post.user.username,
+        "content": post.content,
+        "Likes": post.likes.count(),
+        "timestamp": post.timestamp,
+        "comments": comments
+    }
+    return JsonResponse({"postData": postData})
     
+
+@csrf_exempt
+def user_data(req):
+    if req.method != "POST":
+        return JsonResponse({"error": "wrong method use post"}, status=400)
+    
+    if req.user.is_authenticated:
+        return JsonResponse({"username": req.user.username, "user_id": req.user.id}, status=200)
+    
+    return JsonResponse({"username": None, "user_id": None}, status=400)

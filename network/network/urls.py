@@ -18,4 +18,6 @@ urlpatterns = [
     path('follow', views.follow_unfollow, name="followapi"),
     path("addlike", views.handle_like, name="likes"),
     path("addcomment", views.handle_comment, name="comment"),
+    path("post/<int:post_id>", views.view_post, name="postapi"),
+    path("auth", views.user_data, name="users_data"),
 ]

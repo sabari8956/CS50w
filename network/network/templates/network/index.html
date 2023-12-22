@@ -16,33 +16,51 @@
     {% endif %}
 
     <div class="content-posts">
+        <div id="post-overlay"> 
+            <div id="text">
+                <h1 class="post_username">Post Username</h1>
+                <p class="post_content">Lorem ipsum dolor sit amet consectetur, adipisicing elit. Quod in libero id tempore? Assumenda </p>
 
-        {% for post in posts %}
-    <div class="post-container">
-        <h1> {{post.user}} </h1>
-        <p>{{post.content}}</p>
-        {% if user.is_authenticated %}
-            <button data-like="{% if user in post.likes.all %}true{% else %}fale{% endif %}" data-post_id="{{ post.id }}" id="like-btn">
-                {% if user not in post.likes.all %}
-                    👍
-                {% else %}
-                    👎
+                {% if user.is_authenticated %}
+                <button >
+                        👍
+                </button>
+
+                <button id="comment-btn">Comment</button>
+
+                <div class="comment-div" style="display: none;">
+                    <input type="text">
+                    <button id="comment-submitBtn">Sub</button>
+                </div>
                 {% endif %}
-            </button>
-
-            <button id="comment-btn">Comment</button>
-
-            <div class="comment-div" style="display: none;">
-                <input type="text">
-                <button data-post_id="{{ post.id }}" id="comment-submitBtn">Sub</button>
             </div>
-        {% endif %}
+        </div>
+        {% for post in posts %}
+            <div class="post-container" data-post_id="{{ post.id }}">
+            <h1> {{post.user}} </h1>
+            <p>{{post.content}}</p>
+            {% if user.is_authenticated %}
+                <button data-like="{% if user in post.likes.all %}true{% else %}fale{% endif %}" data-post_id="{{ post.id }}" id="like-btn">
+                    {% if user not in post.likes.all %}
+                        👍
+                    {% else %}
+                        👎
+                    {% endif %}
+                </button>
 
-    </div>
-    {% empty %}
-    <h1>No Posts.</h1>
-    <p>Go to search for some random posts</p>
-    {% endfor %}
+                <button id="comment-btn">Comment</button>
+
+                <div class="comment-div" style="display: none;">
+                    <input type="text">
+                    <button data-post_id="{{ post.id }}" id="comment-submitBtn">Sub</button>
+                </div>
+            {% endif %}
+
+            </div>
+        {% empty %}
+        <h1>No Posts.</h1>
+        <p>Go to search for some random posts</p>
+        {% endfor %}
 
     </div>
 </div>
@@ -50,94 +68,5 @@
 
 
 {% block script %}
-<script src="{% static 'network/index.js' %}"></script>
-<script>
-
-    document.addEventListener("DOMContentLoaded", () => {
-        document.querySelector("#post-btn").addEventListener('click', () => {
-            let text = document.querySelector("#post-content-input").value;
-            let csrftoken = getCookie('csrftoken');
-            fetch('post', {
-                method: "POST",
-                headers: { "X-CSRFToken": csrftoken },
-                body: JSON.stringify({
-                    content: text
-                })
-            })
-                .then(response => response.json())
-                .then(response => {
-                    document.querySelector("#post-content-input").value = "";
-                    console.log(response);
-                })
-        })
-
-        document.querySelectorAll('#like-btn').forEach(btn => {
-            btn.addEventListener('click', (event) => {
-                let csrftoken = getCookie('csrftoken');
-                let user = "{{ user.id }}";
-                let liked = event.target.dataset.like === 'true';
-                let post = event.target.dataset.post_id;
-
-                fetch('/addlike', {
-                    method: "PUT",
-                    headers: { "X-CSRFToken": csrftoken },
-                    body: JSON.stringify({
-                        user_id: user,
-                        like: !liked,
-                        post: post,
-                    })
-                })
-                .then(response => response.json())
-                .then(response => {
-                    if (!liked) {
-                        event.target.innerHTML = '👎';
-                        event.target.dataset.like = !liked;
-                    } else {
-                        event.target.textContent = '👍';
-                        event.target.dataset.like = !liked;
-                    }
-                });
-            });
-        });
-
-        document.querySelectorAll('#comment-btn').forEach(commentBtn => {
-        commentBtn.addEventListener('click', (event) => {
-            const commentSection = event.target.nextElementSibling;
-            // commentSection.style.display = commentSection.style.display === 'none' ? 'block' : 'none';
-            if (commentSection.style.display === 'none'){
-                commentSection.style.display = 'block';
-                commentBtn.innerHTML = "Discard";
-            } else {
-                commentSection.style.display = 'none';
-                commentBtn.innerHTML= "Comment";
-            }
-        });
-
-        document.querySelectorAll("#comment-submitBtn").forEach(submitBtn => {
-            submitBtn.addEventListener('click',(event) => {
-                let csrftoken = getCookie('csrftoken');
-                let user = "{{ user.id }}";
-                let post_id = event.target.dataset.post_id;
-                let comment_data = event.target.previousElementSibling;
-
-                fetch('addcomment', {
-                    method: "POST",
-                    headers: { "X-CSRFToken": csrftoken },
-                    body: JSON.stringify({
-                        user_id: user,
-                        post_id: post_id,
-                        comment_data: comment_data.value
-                    })
-                })
-                comment_data.value = '';
-                let commentBtn = event.target.closest('.post-container').querySelector('#comment-btn');
-                commentBtn.click()
-
-            } )
-        })
-    });
-    })
-
-
-</script>
+<script type="module" src="{% static 'network/main.js' %}"></script>
 {% endblock %}

@@ -175,6 +175,7 @@ def handle_comment(req):
         return JsonResponse({"error": "Invalid method"}, status=400)
     
     data = json.loads(req.body)
+    print(data)
     user = User.objects.get(pk=data["user_id"])
     post = Post.objects.get(pk=data["post_id"])
 
@@ -188,6 +189,8 @@ def handle_comment(req):
 
 
 def view_post(req, post_id):
+    if req.method != "POST":
+        return JsonResponse({"error": "wrong method use post"}, status=400)
     post = Post.objects.get(pk= post_id)
     comments =[ {"name": x.user.username, "comment": x.body, "timestamp": x.timestamp} for x in post.comments.all()]
     postData = {

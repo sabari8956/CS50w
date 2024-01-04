@@ -57,8 +57,9 @@ export function manage_comment(event) {
     .then(response => response.json())
     .then(response => {
         user = response["user_id"];
-        let post_id = event.target.dataset.post_id;
-        let comment_data = event.target.previousElementSibling;
+        let post_id = event.currentTarget.dataset.post_id;
+        console.log(post_id);
+        let comment_data = event.currentTarget.previousElementSibling;
         fetch('addcomment', {
             method: "POST",
             headers: { "X-CSRFToken": csrftoken },

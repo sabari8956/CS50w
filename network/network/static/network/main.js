@@ -1,4 +1,4 @@
-import { manage_post, manage_like, manage_comment } from "./index.js";
+import {getCookie, manage_post, manage_like, manage_comment } from "./index.js";
 
 
 document.addEventListener("DOMContentLoaded", () => {
@@ -20,11 +20,15 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
     // Handles Comment
-    document.querySelectorAll("#comment-submitBtn").forEach(submitBtn => {
-        submitBtn.addEventListener('click',(event) => {
-            manage_comment(event);
-        } )
-    });
+    // ERROR HERE
+    // document.querySelectorAll("#comment-submitBtn").forEach(submitBtn => {
+    //     console.log(submitBtn); // This should log the entire dataset object
+    //     submitBtn.addEventListener('click', (event) => {
+    //         console.log(submitBtn); 
+    //         manage_comment(event);
+    //     });
+    // });
+    
 
     // expands / shrink the comment area
     document.querySelectorAll('#comment-btn').forEach(commentBtn => {
@@ -41,9 +45,21 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
     document.querySelectorAll(".post-container").forEach(post => {
-        post.addEventListener('click', (event) => {
-            console.log(post.dataset.post_id);
-            
+        post.addEventListener('click', () => {            
+            fetch(`post/${post.dataset.post_id}`, {
+                method: "POST",
+                headers: { "X-CSRFToken": getCookie('csrftoken') }
+            })
+            .then(response => response.json())
+            .then(response => {
+                let hoverDiv = document.querySelector("#text");
+                let post_user = hoverDiv.querySelector(".post_username");
+                let post_content = hoverDiv.querySelector(".post_content");
+
+                response = response["postData"]
+                post_user.textContent = response["user"];
+                post_content.textContent = response["content"];
+            });
             const postOverlay = document.querySelector("#post-overlay");
             postOverlay.style.display = 'block';
             postOverlay.classList.add('blurred-background');
